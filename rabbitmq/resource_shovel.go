@@ -1,6 +1,7 @@
 package rabbitmq
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -380,7 +381,11 @@ func setShovelDefinition(shovelMap map[string]interface{}) interface{} {
 	}
 
 	if v, ok := shovelMap["destination_publish_properties"].(string); ok {
-		shovelDefinition.DestinationPublishProperties = v
+		sec := map[string]interface{}{}
+		if err := json.Unmarshal([]byte(v), &sec); err != nil {
+			panic(err)
+		}
+		shovelDefinition.DestinationPublishProperties = sec
 	}
 
 	if v, ok := shovelMap["destination_queue"].(string); ok {
