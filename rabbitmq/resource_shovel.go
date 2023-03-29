@@ -1,11 +1,10 @@
 package rabbitmq
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 
-	rabbithole "github.com/michaelklishin/rabbit-hole/v2"
+	rabbithole "github.com/Galvill/rabbit-hole/v2"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -110,7 +109,7 @@ func resourceShovel() *schema.Resource {
 							Default:  "amqp091",
 						},
 						"destination_publish_properties": {
-							Type:     schema.TypeString,
+							Type:     schema.TypeMap,
 							Optional: true,
 							ForceNew: true,
 							Default:  nil,
@@ -380,12 +379,8 @@ func setShovelDefinition(shovelMap map[string]interface{}) interface{} {
 		shovelDefinition.DestinationProtocol = v
 	}
 
-	if v, ok := shovelMap["destination_publish_properties"].(string); ok {
-		sec := map[string]interface{}{}
-		if err := json.Unmarshal([]byte(v), &sec); err != nil {
-			panic(err)
-		}
-		shovelDefinition.DestinationPublishProperties = sec
+	if v, ok := shovelMap["destination_publish_properties"].(map[string]interface{}); ok {
+		shovelDefinition.DestinationPublishProperties = v
 	}
 
 	if v, ok := shovelMap["destination_queue"].(string); ok {
