@@ -97,7 +97,7 @@ func resourceShovel() *schema.Resource {
 							Default:  nil,
 						},
 						"destination_properties": {
-							Type:     schema.TypeMap,
+							Type:     schema.TypeString,
 							Optional: true,
 							ForceNew: true,
 							Default:  nil,
@@ -109,7 +109,7 @@ func resourceShovel() *schema.Resource {
 							Default:  "amqp091",
 						},
 						"destination_publish_properties": {
-							Type:     schema.TypeMap,
+							Type:     schema.TypeString,
 							Optional: true,
 							ForceNew: true,
 							Default:  nil,
@@ -120,12 +120,6 @@ func resourceShovel() *schema.Resource {
 							Default:       nil,
 							Optional:      true,
 							ForceNew:      true,
-						},
-						"destination_queue_arguments": {
-							Type:     schema.TypeMap,
-							Optional: true,
-							ForceNew: true,
-							Default:  nil,
 						},
 						"destination_uri": {
 							Type:      schema.TypeString,
@@ -262,7 +256,6 @@ func ReadShovel(d *schema.ResourceData, meta interface{}) error {
 	info["destination_properties"] = shovelInfo.Definition.DestinationProperties
 	info["destination_protocol"] = shovelInfo.Definition.DestinationProtocol
 	info["destination_publish_properties"] = shovelInfo.Definition.DestinationPublishProperties
-	info["destination_queue_arguments"] = shovelInfo.Definition.DestinationQueueArgs
 	info["destination_queue"] = shovelInfo.Definition.DestinationQueue
 	if len(shovelInfo.Definition.DestinationURI) > 0 {
 		info["destination_uri"] = shovelInfo.Definition.DestinationURI[0]
@@ -366,7 +359,7 @@ func setShovelDefinition(shovelMap map[string]interface{}) interface{} {
 		shovelDefinition.DestinationAddress = v
 	}
 
-	if v, ok := shovelMap["destination_application_properties"].(map[string]interface{}); ok {
+	if v, ok := shovelMap["destination_application_properties"].(string); ok {
 		shovelDefinition.DestinationApplicationProperties = v
 	}
 
@@ -378,7 +371,7 @@ func setShovelDefinition(shovelMap map[string]interface{}) interface{} {
 		shovelDefinition.DestinationExchangeKey = v
 	}
 
-	if v, ok := shovelMap["destination_properties"].(map[string]interface{}); ok {
+	if v, ok := shovelMap["destination_properties"].(string); ok {
 		shovelDefinition.DestinationProperties = v
 	}
 
@@ -386,16 +379,12 @@ func setShovelDefinition(shovelMap map[string]interface{}) interface{} {
 		shovelDefinition.DestinationProtocol = v
 	}
 
-	if v, ok := shovelMap["destination_publish_properties"].(map[string]interface{}); ok {
+	if v, ok := shovelMap["destination_publish_properties"].(string); ok {
 		shovelDefinition.DestinationPublishProperties = v
 	}
 
 	if v, ok := shovelMap["destination_queue"].(string); ok {
 		shovelDefinition.DestinationQueue = v
-	}
-
-	if v, ok := shovelMap["destination_queue_arguments"].(map[string]interface{}); ok {
-		shovelDefinition.DestinationQueueArgs = v
 	}
 
 	if v, ok := shovelMap["destination_uri"].(string); ok {
